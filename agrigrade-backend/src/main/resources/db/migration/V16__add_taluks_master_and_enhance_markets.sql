@@ -118,8 +118,12 @@ ON DUPLICATE KEY UPDATE `code` = VALUES(`code`);
 -- 3. ENHANCE MARKETS TABLE WITH TALUK & DISTRICT_ID
 -- ----------------------------------------------------------------------------
 ALTER TABLE `markets`
-  ADD COLUMN `taluk` VARCHAR(150) DEFAULT NULL AFTER `district`,
-  ADD COLUMN `district_id` BIGINT UNSIGNED DEFAULT NULL AFTER `taluk`,
+  ADD COLUMN `taluk` VARCHAR(150) DEFAULT NULL AFTER `district`;
+
+ALTER TABLE `markets`
+  ADD COLUMN `district_id` BIGINT UNSIGNED DEFAULT NULL AFTER `taluk`;
+
+ALTER TABLE `markets`
   ADD COLUMN `village_town_city` VARCHAR(150) DEFAULT NULL AFTER `district_id`;
 
 -- Update existing market district_ids

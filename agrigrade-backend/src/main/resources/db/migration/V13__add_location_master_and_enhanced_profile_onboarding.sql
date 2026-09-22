@@ -100,8 +100,12 @@ AS new_d ON DUPLICATE KEY UPDATE `name` = new_d.`name`, `code` = new_d.`code`;
 -- 4. ALTER USERS TABLE FOR ONBOARDING, LANGUAGE & THEME
 -- ----------------------------------------------------------------------------
 ALTER TABLE `users`
-  ADD COLUMN `profile_completed` TINYINT(1) NOT NULL DEFAULT 0 AFTER `status`,
-  ADD COLUMN `preferred_language` VARCHAR(10) NOT NULL DEFAULT 'en' AFTER `profile_completed`,
+  ADD COLUMN `profile_completed` TINYINT(1) NOT NULL DEFAULT 0 AFTER `status`;
+
+ALTER TABLE `users`
+  ADD COLUMN `preferred_language` VARCHAR(10) NOT NULL DEFAULT 'en' AFTER `profile_completed`;
+
+ALTER TABLE `users`
   ADD COLUMN `preferred_theme` VARCHAR(20) NOT NULL DEFAULT 'LIGHT' AFTER `preferred_language`;
 
 -- ----------------------------------------------------------------------------
@@ -110,9 +114,11 @@ ALTER TABLE `users`
 ALTER TABLE `addresses`
   MODIFY COLUMN `address_type` ENUM('CONTACT', 'FARM', 'BUSINESS', 'RESIDENTIAL', 'BILLING', 'SHIPPING') NOT NULL DEFAULT 'CONTACT',
   ADD COLUMN `village_town_city` VARCHAR(150) DEFAULT NULL AFTER `address_line2`,
-  ADD COLUMN `taluk` VARCHAR(150) DEFAULT NULL AFTER `village_town_city`,
   ADD COLUMN `landmark` VARCHAR(255) DEFAULT NULL AFTER `pincode`,
-  ADD COLUMN `state_id` BIGINT UNSIGNED DEFAULT NULL AFTER `district`,
+  ADD COLUMN `state_id` BIGINT UNSIGNED DEFAULT NULL AFTER `district`;
+
+ALTER TABLE `addresses`
+  ADD COLUMN `taluk` VARCHAR(150) DEFAULT NULL AFTER `village_town_city`,
   ADD COLUMN `district_id` BIGINT UNSIGNED DEFAULT NULL AFTER `state_id`;
 
 ALTER TABLE `addresses`
@@ -124,9 +130,13 @@ ALTER TABLE `addresses`
 -- ----------------------------------------------------------------------------
 ALTER TABLE `farmer_profiles`
   ADD COLUMN `contact_address_id` BIGINT UNSIGNED DEFAULT NULL AFTER `kisan_credit_card_no`,
-  ADD COLUMN `farm_address_id` BIGINT UNSIGNED DEFAULT NULL AFTER `contact_address_id`,
-  ADD COLUMN `farm_same_as_contact` TINYINT(1) NOT NULL DEFAULT 1 AFTER `farm_address_id`,
   ADD COLUMN `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE `farmer_profiles`
+  ADD COLUMN `farm_address_id` BIGINT UNSIGNED DEFAULT NULL AFTER `contact_address_id`;
+
+ALTER TABLE `farmer_profiles`
+  ADD COLUMN `farm_same_as_contact` TINYINT(1) NOT NULL DEFAULT 1 AFTER `farm_address_id`;
 
 ALTER TABLE `farmer_profiles`
   ADD CONSTRAINT `fk_fp_contact_addr` FOREIGN KEY (`contact_address_id`) REFERENCES `addresses` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
@@ -139,8 +149,10 @@ ALTER TABLE `buyer_profiles`
   MODIFY COLUMN `buyer_type` VARCHAR(50) NOT NULL DEFAULT 'WHOLESALER',
   ADD COLUMN `business_address_id` BIGINT UNSIGNED DEFAULT NULL AFTER `primary_address_id`,
   ADD COLUMN `business_registration_number` VARCHAR(100) DEFAULT NULL AFTER `gst_number`,
-  ADD COLUMN `purchase_capacity` VARCHAR(100) DEFAULT NULL AFTER `business_registration_number`,
   ADD COLUMN `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE `buyer_profiles`
+  ADD COLUMN `purchase_capacity` VARCHAR(100) DEFAULT NULL AFTER `business_registration_number`;
 
 ALTER TABLE `buyer_profiles`
   ADD CONSTRAINT `fk_bp_biz_addr` FOREIGN KEY (`business_address_id`) REFERENCES `addresses` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
