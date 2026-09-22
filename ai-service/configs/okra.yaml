@@ -1,0 +1,39 @@
+crop_name: "okra"
+description: "Okra produce dataset covering maturity stages (Under-mature, Mature, Over-mature)."
+
+dataset_sources:
+  zip_archives: []
+  extracted_directories:
+    - "Okra Image Dataset/Okra Image Dataset/Mature"
+    - "Okra Image Dataset/Okra Image Dataset/Over-mature"
+    - "Okra Image Dataset/Okra Image Dataset/Under-mature"
+
+supported_tasks:
+  maturity:
+    description: "3-stage okra maturity classification"
+    classes:
+      - "under_mature"
+      - "mature"
+      - "over_mature"
+    ground_truth: true
+    requires_manual_verification: false
+    ready_for_training: true
+    total_images: 364
+
+  classification:
+    description: "Crop validation classification (okra vs non-crop)"
+    classes:
+      - "okra"
+    ground_truth: true
+    requires_manual_verification: false
+    ready_for_training: true
+    total_images: 364
+
+recommended_split:
+  train: 0.70
+  validation: 0.15
+  test: 0.15
+
+data_cleaning:
+  deduplicate_by_sha256: true
+  remove_corrupted: true

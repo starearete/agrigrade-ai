@@ -1,0 +1,40 @@
+crop_name: "mango"
+description: "Mango produce dataset containing unverified folder-based grade labels (Grade_A, Grade_B, Grade_C)."
+
+dataset_sources:
+  zip_archives: []
+  extracted_directories:
+    - "Grade_A"
+    - "Grade_B"
+    - "Grade_C"
+
+supported_tasks:
+  classification:
+    description: "Crop validation classification (mango vs non-crop)"
+    classes:
+      - "mango"
+    ground_truth: true
+    requires_manual_verification: false
+    ready_for_training: true
+    total_images: 600
+
+  quality:
+    description: "Suspicious folder-level quality grades (Grade_A, Grade_B, Grade_C)"
+    classes:
+      - "grade_a"
+      - "grade_b"
+      - "grade_c"
+    ground_truth: false
+    requires_manual_verification: true
+    ready_for_training: false
+    total_images: 600
+    notes: "CRITICAL: Per Rule 14 & 15, folder names must NOT be assumed as ground-truth quality labels. Must be verified against objective defect/maturity criteria."
+
+recommended_split:
+  train: 0.70
+  validation: 0.15
+  test: 0.15
+
+data_cleaning:
+  deduplicate_by_sha256: true
+  remove_corrupted: true

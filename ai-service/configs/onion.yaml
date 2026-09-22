@@ -1,0 +1,48 @@
+crop_name: "onion"
+description: "Onion dataset containing 16,300 images inside ZIP archive covering bulb disease (healthy vs unhealthy), leaf disease, and variety (red vs white onion)."
+
+dataset_sources:
+  zip_archives:
+    - "Image Dataset of Red and White Onion Bulbs and Lea (1)/Image Dataset of Red and White Onion Bulbs and Lea/Onion Leaves and Bulb Dataset.zip"
+  extracted_directories: []
+
+supported_tasks:
+  disease:
+    description: "Onion bulb health classification (healthy_bulb vs unhealthy_bulb)"
+    classes:
+      - "healthy_bulb"
+      - "unhealthy_bulb"
+    ground_truth: true
+    requires_manual_verification: false
+    ready_for_training: true
+    total_images: 12260
+
+  disease_leaves:
+    description: "Onion leaf health classification (healthy_leaf vs unhealthy_leaf)"
+    classes:
+      - "healthy_leaf"
+      - "unhealthy_leaf"
+    ground_truth: true
+    requires_manual_verification: false
+    ready_for_training: true
+    total_images: 4040
+
+  classification:
+    description: "Onion bulb variety classification (red_onion vs white_onion)"
+    classes:
+      - "red_onion"
+      - "white_onion"
+    ground_truth: true
+    requires_manual_verification: false
+    ready_for_training: true
+    total_images: 12260
+
+recommended_split:
+  train: 0.70
+  validation: 0.15
+  test: 0.15
+
+data_cleaning:
+  deduplicate_by_sha256: true
+  remove_corrupted: true
+  retain_zip_as_reference: true

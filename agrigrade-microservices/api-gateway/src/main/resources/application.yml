@@ -1,0 +1,23 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: api-gateway
+
+services:
+  auth-service: http://localhost:8081
+  user-service: http://localhost:8082
+  ai-service: http://localhost:8083
+  batch-service: http://localhost:8084
+  listing-service: http://localhost:8085
+  market-service: http://localhost:8086
+  chat-service: http://localhost:8087
+  notification-service: http://localhost:8088
+  admin-service: http://localhost:8089
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

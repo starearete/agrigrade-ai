@@ -1,0 +1,34 @@
+crop_name: "beetroot"
+description: "Beetroot produce dataset for valid produce crop classification."
+
+dataset_sources:
+  zip_archives: []
+  extracted_directories:
+    - "Beetroot-198"
+
+supported_tasks:
+  classification:
+    description: "Binary/crop validation classification (beetroot vs non-crop)"
+    classes:
+      - "beetroot"
+    ground_truth: true
+    requires_manual_verification: false
+    ready_for_training: true
+    total_images: 198
+
+  maturity:
+    description: "Maturity stage classification"
+    classes: []
+    ground_truth: false
+    requires_manual_verification: true
+    ready_for_training: false
+    notes: "Requires dedicated maturity ground-truth dataset collection."
+
+recommended_split:
+  train: 0.70
+  validation: 0.15
+  test: 0.15
+
+data_cleaning:
+  deduplicate_by_sha256: true
+  remove_corrupted: true

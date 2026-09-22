@@ -1,0 +1,45 @@
+crop_name: "banana"
+description: "Banana produce dataset covering maturity stages (unripe, ripe, overripe, rotten) and unverified quality grades."
+
+dataset_sources:
+  zip_archives:
+    - "banana.zip"
+  extracted_directories:
+    - "banana/clean/maturity"
+    - "classified"
+    - "quality_labeled"
+
+supported_tasks:
+  maturity:
+    description: "4-stage banana maturity classification"
+    classes:
+      - "unripe"
+      - "ripe"
+      - "overripe"
+      - "rotten"
+    ground_truth: true
+    requires_manual_verification: false
+    ready_for_training: true
+    total_images: 5616
+
+  quality:
+    description: "Folder-labeled quality grades (grade_b_good, grade_c_medium, poor)"
+    classes:
+      - "grade_b_good"
+      - "grade_c_medium"
+      - "poor"
+    ground_truth: false
+    requires_manual_verification: true
+    ready_for_training: false
+    total_images: 157
+    notes: "Requires objective defect and maturity criteria definition before Grade mapping."
+
+recommended_split:
+  train: 0.70
+  validation: 0.15
+  test: 0.15
+
+data_cleaning:
+  deduplicate_by_sha256: true
+  remove_corrupted: true
+  retain_zip_as_reference: true

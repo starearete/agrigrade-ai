@@ -1,0 +1,50 @@
+{
+  "crop": "tomato",
+  "display_name": "Tomato",
+  "synonyms": [
+    "tomato",
+    "tomatoes",
+    "thakkali",
+    "tamatar"
+  ],
+  "penalties": {
+    "maturity": {
+      "green": 10,
+      "breaker": 5,
+      "turning": 0,
+      "pink": 0,
+      "light_red": 0,
+      "ripe": 0,
+      "overripe": 20,
+      "rotten": 95
+    },
+    "defects": {
+      "none": 0,
+      "mild": 5,
+      "moderate": 18,
+      "severe": 35,
+      "surface_blemish": 18,
+      "sunscald": 15,
+      "growth_cracking": 20,
+      "mechanical_damage": 20,
+      "catfacing": 15,
+      "blossom_end_rot": 35,
+      "severe_rot": 95
+    },
+    "disease": {
+      "none": 0,
+      "suspected": 15,
+      "early_blight": 30,
+      "late_blight": 45,
+      "target_spot": 25,
+      "bacterial_spot": 35,
+      "fungal_rot": 60,
+      "visible": 45
+    }
+  },
+  "grade_boundaries": {
+    "grade_a": 90,
+    "grade_b": 75,
+    "grade_c": 60
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "crop": "carrot",
+  "display_name": "Carrot",
+  "synonyms": [
+    "carrot",
+    "carrots",
+    "gajar"
+  ],
+  "penalties": {
+    "defects": {
+      "surface_blemish": 5,
+      "discoloration": 10,
+      "mechanical_damage": 20,
+      "severe_rot": 95
+    },
+    "disease": {
+      "none": 0,
+      "suspected": 15,
+      "visible": 45
+    }
+  },
+  "grade_boundaries": {
+    "grade_a": 90,
+    "grade_b": 75,
+    "grade_c": 60
+  }
+}

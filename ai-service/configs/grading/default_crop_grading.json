@@ -1,0 +1,86 @@
+{
+  "supported_crops": {
+    "banana": {
+      "display_name": "Banana",
+      "synonyms": ["banana"]
+    },
+    "mango": {
+      "display_name": "Mango",
+      "synonyms": ["mango"]
+    },
+    "tomato": {
+      "display_name": "Tomato",
+      "synonyms": ["tomato"]
+    },
+    "onion": {
+      "display_name": "Onion",
+      "synonyms": ["onion"]
+    },
+    "brinjal": {
+      "display_name": "Brinjal / Eggplant",
+      "synonyms": ["brinjal", "eggplant", "baingan"]
+    },
+    "okra": {
+      "display_name": "Bhendi / Okra",
+      "synonyms": ["okra", "bhendi", "ladies finger", "lady finger"]
+    },
+    "green_chilli": {
+      "display_name": "Green Chilli",
+      "synonyms": ["green_chilli", "green chili", "green chilli", "chili"]
+    },
+    "drumstick": {
+      "display_name": "Drumstick / Moringa",
+      "synonyms": ["drumstick", "moringa", "murungai"]
+    },
+    "beetroot": {
+      "display_name": "Beetroot",
+      "synonyms": ["beetroot", "beet"]
+    },
+    "bottle_gourd": {
+      "display_name": "Bottle Gourd",
+      "synonyms": ["bottle_gourd", "bottle gourd", "lauki"]
+    },
+    "bitter_gourd": {
+      "display_name": "Bitter Gourd",
+      "synonyms": ["bitter_gourd", "bitter gourd", "karela"]
+    },
+    "snake_gourd": {
+      "display_name": "Snake Gourd",
+      "synonyms": ["snake_gourd", "snake gourd", "pudalangai"]
+    },
+    "carrot": {
+      "display_name": "Carrot",
+      "synonyms": ["carrot", "gajar"]
+    },
+    "tapioca": {
+      "display_name": "Tapioca / Cassava",
+      "synonyms": ["tapioca", "cassava", "maravalli"]
+    }
+  },
+  "default_penalties": {
+    "maturity": {
+      "unripe": 10,
+      "mature": 0,
+      "ripe": 0,
+      "overripe": 20,
+      "rotten": 60,
+      "unknown": 5
+    },
+    "disease": {
+      "none": 0,
+      "suspected": 15,
+      "visible": 40
+    },
+    "defect_severity": {
+      "none": 0,
+      "mild": 5,
+      "moderate": 15,
+      "severe": 35
+    }
+  },
+  "grade_boundaries": {
+    "grade_a": 90,
+    "grade_b": 75,
+    "grade_c": 60
+  }
+}

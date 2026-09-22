@@ -1,0 +1,39 @@
+node_modules/
+dist/
+target/
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+.env
+.env.*
+!.env.example
+
+*.log
+
+.idea/
+.vscode/
+*.iml
+
+coverage/
+build/
+
+cloudflared.exe
+
+# AI datasets and trained models
+ai-service/dataset/
+ai-service/models/
+
+# Runtime uploaded files
+**/uploads/
+
+# Local database/cache files
+*.db
+
+# AI generated reports
+ai-service/reports/
+
+# Generated scan files
+*_scan.json
+*_scan_result.json

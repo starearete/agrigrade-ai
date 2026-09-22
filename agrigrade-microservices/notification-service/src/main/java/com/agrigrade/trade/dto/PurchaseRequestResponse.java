@@ -1,0 +1,42 @@
+package com.agrigrade.trade.dto;
+
+import java.math.BigDecimal;
+
+public record PurchaseRequestResponse(
+        Long id,
+        String requestPublicId,
+        String requestId,
+        Long listingId,
+        String listingCode,
+        String cropName,
+        String varietyName,
+        Long buyerId,
+        String buyerName,
+        String buyerBusinessName,
+        String buyerDistrict,
+        String buyerVerificationStatus,
+        Long farmerId,
+        String farmerName,
+        BigDecimal offeredPricePerUnit,
+        BigDecimal offeredPricePerKg,
+        BigDecimal askingPricePerUnit,
+        BigDecimal requestedQuantity,
+        BigDecimal requestedTotalPrice,
+        String quantityUnit,
+        String buyerMessage,
+        String message,
+        String status,
+        BigDecimal counterPricePerKg,
+        BigDecimal counterQuantity,
+        String farmerResponseMessage,
+        BigDecimal listingQuantityRemaining,
+        String assignedGrade,
+        String certificateNumber,
+        Double qualityScore,
+        Double remainingShelfLifeDays,
+        String harvestDate,
+        String createdAt,
+        String updatedAt,
+        String respondedAt,
+        String expiresAt
+) {}
