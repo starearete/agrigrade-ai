@@ -373,7 +373,7 @@ export const ListProductModal: React.FC<ListProductModalProps> = ({
                       <div><span className="text-[#526158]">AI GRADE:</span> <strong>{formattedGrade}</strong></div>
                       <div><span className="text-[#526158]">QUALITY SCORE:</span> <strong>{qualityScore}%</strong></div>
                       <div><span className="text-[#526158]">CERTIFICATE:</span> <strong className="text-[#1B5E20]">{certNumber} ✓ VERIFIED</strong></div>
-                      <div><span className="text-[#526158]">ASKING PRICE:</span> <strong className="text-[#2E7D32]">{formatCurrency(expectedPrice)} / KG</strong></div>
+                      <div><span className="text-[#526158]">ASKING PRICE:</span> <strong className="text-[#2E7D32]">{formatCurrency(parseFloat(expectedPrice) || 0)} / KG</strong></div>
                     </div>
                   </div>
                 </div>
@@ -394,7 +394,7 @@ export const ListProductModal: React.FC<ListProductModalProps> = ({
                   <div className="bg-[#FCFBF5] border border-[#C5E6CC] p-4 rounded-2xl text-left text-xs space-y-1">
                     <span className="font-bold text-[#1B5E20] block">Marketplace Display Summary:</span>
                     <p className="text-[#17201A] font-bold">
-                      {currentBatch.cropName} ({currentBatch.varietyName}) • {quantityToSell.toLocaleString()} KG • {formattedGrade} ({qualityScore}%) • {formatCurrency(expectedPrice)}/KG
+                      {currentBatch.cropName} ({currentBatch.varietyName}) • {quantityToSell.toLocaleString()} KG • {formattedGrade} ({qualityScore}%) • {formatCurrency(parseFloat(expectedPrice) || 0)}/KG
                     </p>
                     <p className="text-[11px] text-[#526158]">Location: {currentBatch.harvestLocationDistrict} • Certificate: {certNumber}</p>
                   </div>
