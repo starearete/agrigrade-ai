@@ -1,5 +1,4 @@
-ALTER TABLE purchase_requests
-ADD COLUMN client_request_id VARCHAR(64) NULL;
+-- V19: Add purchase request client id
+-- Already applied manually to the TiDB database.
 
-ALTER TABLE purchase_requests
-ADD INDEX idx_pr_buyer_client_id (buyer_user_id, client_request_id);
+SELECT 1;
