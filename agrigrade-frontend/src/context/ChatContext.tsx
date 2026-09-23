@@ -262,7 +262,17 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const connectWebSocket = () => {
       try {
-        const wsUrl = `ws://${window.location.hostname}:8085/ws`;
+        const apiBase = (import.meta.env.VITE_API_URL as string) || 'https://agrigrade-backend-0g8z.onrender.com/api/v1';
+        let wsUrl = (import.meta.env.VITE_WS_URL as string);
+        if (!wsUrl) {
+          if (apiBase.startsWith('https://')) {
+            wsUrl = apiBase.replace(/^https:\/\//, 'wss://').replace(/\/api\/v1\/?$/, '') + '/ws';
+          } else if (apiBase.startsWith('http://')) {
+            wsUrl = apiBase.replace(/^http:\/\//, 'ws://').replace(/\/api\/v1\/?$/, '') + '/ws';
+          } else {
+            wsUrl = 'wss://agrigrade-backend-0g8z.onrender.com/ws';
+          }
+        }
         ws = new WebSocket(wsUrl);
 
         ws.onopen = () => {
