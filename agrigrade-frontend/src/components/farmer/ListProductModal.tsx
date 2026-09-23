@@ -32,11 +32,11 @@ export const ListProductModal: React.FC<ListProductModalProps> = ({
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
 
   const [quantityToSell, setQuantityToSell] = useState<number>(initialBatch.quantity);
-  const [expectedPrice, setExpectedPrice] = useState<number>(26.0);
-  const [minPrice, setMinPrice] = useState<number>(23.5);
+  const [expectedPrice, setExpectedPrice] = useState<string>('');
+  const [minPrice, setMinPrice] = useState<string>('');
   const [availableFrom, setAvailableFrom] = useState<string>(new Date().toISOString().split('T')[0]);
-  const [deliveryPreference, setDeliveryPreference] = useState<string>('Farm Pickup / Buyer Transport');
-  const [notes, setNotes] = useState<string>('Computer vision AI certified harvest load.');
+  const [deliveryPreference, setDeliveryPreference] = useState<string>('');
+  const [notes, setNotes] = useState<string>('');
 
   const [step, setStep] = useState<'FORM' | 'CONFIRM' | 'SUCCESS'>('FORM');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -87,11 +87,16 @@ export const ListProductModal: React.FC<ListProductModalProps> = ({
   const harvestDate = currentBatch.harvestDate ? formatDate(currentBatch.harvestDate) : formatDate(new Date().toISOString());
 
   const handleConfirmAndPublish = async () => {
+    const numericPrice = parseFloat(expectedPrice);
+    if (isNaN(numericPrice) || numericPrice <= 0) {
+      showToast('Please enter a valid asking price.', 'warning');
+      return;
+    }
     setIsSubmitting(true);
     try {
       const created = await listingService.createListingFromBatch(
         currentBatch.id,
-        expectedPrice,
+        numericPrice,
         100 // Minimum order quantity
       );
       setPublishedListing(created);
@@ -230,7 +235,7 @@ export const ListProductModal: React.FC<ListProductModalProps> = ({
                     <span>Certificate Number: <strong className="font-mono">{certNumber}</strong></span>
                   </div>
                   <div className="text-[#526158]">
-                    <span>Asking Rate: <strong className="text-[#2E7D32]">{formatCurrency(expectedPrice)}/KG</strong></span>
+                    <span>Asking Rate: <strong className="text-[#2E7D32]">{formatCurrency(parseFloat(expectedPrice) || 0)}/KG</strong></span>
                   </div>
                 </div>
               </div>
@@ -319,7 +324,8 @@ export const ListProductModal: React.FC<ListProductModalProps> = ({
                         type="number"
                         step="0.50"
                         value={expectedPrice}
-                        onChange={(e) => setExpectedPrice(parseFloat(e.target.value) || 0)}
+                        onChange={(e) => setExpectedPrice(e.target.value)}
+                        placeholder="e.g. 26.00"
                         className="w-full p-2.5 bg-[#FCFBF5] border border-[#C5E6CC] rounded-xl font-bold text-[#1B5E20] focus:ring-2 focus:ring-[#2E7D32]"
                       />
                     </div>
@@ -330,7 +336,8 @@ export const ListProductModal: React.FC<ListProductModalProps> = ({
                         type="number"
                         step="0.50"
                         value={minPrice}
-                        onChange={(e) => setMinPrice(parseFloat(e.target.value) || 0)}
+                        onChange={(e) => setMinPrice(e.target.value)}
+                        placeholder="e.g. 23.50"
                         className="w-full p-2.5 bg-[#FCFBF5] border border-[#C5E6CC] rounded-xl font-bold focus:ring-2 focus:ring-[#2E7D32]"
                       />
                     </div>
@@ -352,6 +359,7 @@ export const ListProductModal: React.FC<ListProductModalProps> = ({
                       type="text"
                       value={deliveryPreference}
                       onChange={(e) => setDeliveryPreference(e.target.value)}
+                      placeholder="e.g. Farm Pickup / Buyer Transport"
                       className="w-full p-2.5 bg-[#FCFBF5] border border-[#C5E6CC] rounded-xl font-medium focus:ring-2 focus:ring-[#2E7D32]"
                     />
                   </div>

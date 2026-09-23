@@ -29,18 +29,18 @@ export const BatchCreatePage: React.FC = () => {
 
   const [crops, setCrops] = useState<Crop[]>([]);
   const [varieties, setVarieties] = useState<CropVariety[]>([]);
-  const [cropId, setCropId] = useState<number>(1);
-  const [varietyId, setVarietyId] = useState<number>(1);
+  const [cropId, setCropId] = useState<number>(0);
+  const [varietyId, setVarietyId] = useState<number>(0);
   const [isLoadingCrops, setIsLoadingCrops] = useState<boolean>(true);
 
   const [harvestDate, setHarvestDate] = useState<string>(
     new Date().toISOString().split('T')[0]
   );
-  const [quantityStr, setQuantityStr] = useState<string>('2500');
+  const [quantityStr, setQuantityStr] = useState<string>('');
   const [quantityUnit, setQuantityUnit] = useState<string>('KG');
   const [district, setDistrict] = useState<string>('');
   const [districtsList, setDistrictsList] = useState<{ id: number; name: string }[]>([]);
-  const [storageCondition, setStorageCondition] = useState<StorageCondition>('AMBIENT');
+  const [storageCondition, setStorageCondition] = useState<StorageCondition | ''>('');
 
   // Media Evidence State
   const [photos, setPhotos] = useState<MediaAsset[]>([]);
@@ -72,36 +72,18 @@ export const BatchCreatePage: React.FC = () => {
     const loadInitialData = async () => {
       try {
         setIsLoadingCrops(true);
-        const [fetchedCrops, dList, fp] = await Promise.all([
+        const [fetchedCrops, dList] = await Promise.all([
           cropService.getCrops(),
           locationService.getDistricts(1),
-          profileService.getFarmerProfile().catch(() => null),
         ]);
 
         if (isMounted) {
           setDistrictsList(dList);
-          const farmerDist = fp?.farmAddress?.district || fp?.contactAddress?.district;
-          if (farmerDist) {
-            setDistrict(farmerDist);
-          } else if (dList.length > 0) {
-            setDistrict(dList[0].name);
-          }
         }
 
         if (isMounted && fetchedCrops.length > 0) {
           setCrops(fetchedCrops);
-          const initialCrop = fetchedCrops[0];
-          setCropId(initialCrop.id);
-          if (initialCrop.defaultStorageCondition) {
-            setStorageCondition(initialCrop.defaultStorageCondition);
-          }
-          const fetchedVars = await cropService.getVarietiesByCropId(initialCrop.id);
-          if (isMounted) {
-            setVarieties(fetchedVars);
-            if (fetchedVars.length > 0) {
-              setVarietyId(fetchedVars[0].id);
-            }
-          }
+          // Do not auto-select crop or variety so inputs start clean with placeholders
         }
       } catch (err) {
         console.error('Failed to load crops/varieties:', err);
@@ -127,16 +109,13 @@ export const BatchCreatePage: React.FC = () => {
     try {
       const vars = await cropService.getVarietiesByCropId(newCropId);
       setVarieties(vars);
-      if (vars.length > 0) {
-        setVarietyId(vars[0].id);
-      }
+      setVarietyId(0); // require explicit variety selection
     } catch (err) {
       console.error('Failed to load varieties for crop', newCropId, err);
       showToast('Failed to load varieties for selected crop.', 'error');
     }
   };
 
-  // File Handlers & Validations
   const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -267,6 +246,11 @@ export const BatchCreatePage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!cropId || cropId <= 0) {
+      showToast('Please select a target crop.', 'warning');
+      return;
+    }
+
     if (!varietyId || varietyId <= 0) {
       showToast('Please select a valid variety for the crop.', 'warning');
       return;
@@ -275,6 +259,16 @@ export const BatchCreatePage: React.FC = () => {
     const validation = validateQuantityInput(quantityStr, undefined, quantityUnit);
     if (!validation.isValid) {
       showToast(validation.error || 'Please enter a valid harvest quantity.', 'warning');
+      return;
+    }
+
+    if (!district || district.trim() === '') {
+      showToast('Please select a harvest district.', 'warning');
+      return;
+    }
+
+    if (!storageCondition || storageCondition.trim() === '') {
+      showToast('Please select a storage condition.', 'warning');
       return;
     }
 
@@ -334,6 +328,7 @@ export const BatchCreatePage: React.FC = () => {
               disabled={isLoadingCrops}
               className="w-full p-2.5 bg-white border border-[#C5E6CC] rounded-xl focus:ring-2 focus:ring-[#2E7D32] font-semibold"
             >
+              <option value={0} disabled>-- Select Target Crop --</option>
               {crops.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -345,20 +340,19 @@ export const BatchCreatePage: React.FC = () => {
           <div>
             <label className="block font-bold text-[#17201A] mb-1">Variety / Cultivar</label>
             <select
-              value={varietyId || ''}
+              value={varietyId}
               onChange={(e) => setVarietyId(parseInt(e.target.value, 10))}
-              disabled={varieties.length === 0}
+              disabled={cropId === 0 || varieties.length === 0}
               className="w-full p-2.5 bg-white border border-[#C5E6CC] rounded-xl focus:ring-2 focus:ring-[#2E7D32] font-semibold"
             >
-              {varieties.length === 0 ? (
-                <option value="" disabled>No varieties available</option>
-              ) : (
-                varieties.map((v) => (
-                  <option key={v.id} value={v.id}>
-                    {v.name}
-                  </option>
-                ))
-              )}
+              <option value={0} disabled>
+                {cropId === 0 ? '-- Select Target Crop First --' : varieties.length === 0 ? 'No varieties available' : '-- Select Variety / Cultivar --'}
+              </option>
+              {varieties.map((v) => (
+                <option key={v.id} value={v.id}>
+                  {v.name}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -384,7 +378,7 @@ export const BatchCreatePage: React.FC = () => {
               value={quantityStr}
               onChange={(e) => setQuantityStr(e.target.value)}
               onBlur={() => setQuantityStr(normalizeNumericInput(quantityStr))}
-              placeholder="e.g. 2500"
+              placeholder="e.g. 500"
               className="w-full p-2.5 bg-white border border-[#C5E6CC] rounded-xl focus:ring-2 focus:ring-[#2E7D32] font-bold"
             />
           </div>
@@ -410,15 +404,12 @@ export const BatchCreatePage: React.FC = () => {
               onChange={(e) => setDistrict(e.target.value)}
               className="w-full p-2.5 bg-white border border-[#C5E6CC] rounded-xl focus:ring-2 focus:ring-[#2E7D32] font-semibold"
             >
-              {districtsList.length > 0 ? (
-                districtsList.map((d) => (
-                  <option key={d.id} value={d.name}>
-                    {d.name}
-                  </option>
-                ))
-              ) : (
-                <option value={district}>{district || 'Select District'}</option>
-              )}
+              <option value="" disabled>-- Select Harvest District --</option>
+              {districtsList.map((d) => (
+                <option key={d.id} value={d.name}>
+                  {d.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -436,9 +427,7 @@ export const BatchCreatePage: React.FC = () => {
               onChange={(e) => setStorageCondition(e.target.value as StorageCondition)}
               className="w-full p-2.5 bg-white border border-[#C5E6CC] rounded-xl focus:ring-2 focus:ring-[#2E7D32] font-semibold"
             >
-              {STORAGE_OPTIONS.some((o) => o.value === storageCondition) ? null : (
-                <option value={storageCondition}>{storageCondition}</option>
-              )}
+              <option value="" disabled>-- Select Storage Condition --</option>
               {STORAGE_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}
