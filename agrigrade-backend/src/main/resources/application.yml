@@ -5,7 +5,7 @@ spring:
     name: agrigrade-backend
 
 server:
-  port: 8085
+  port: ${PORT:${SERVER_PORT:8085}}
 
 management:
   endpoints:

@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:8085}
+  port: ${PORT:${SERVER_PORT:8085}}
 
 spring:
   datasource:
@@ -27,7 +27,7 @@ spring:
 
 app:
   jwt:
-    secret: ${JWT_SECRET:${JWT_SECRET}}
+    secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
     expiration-ms: 86400000 # 24 Hours
     refresh-expiration-ms: 604800000 # 7 Days
   google:
