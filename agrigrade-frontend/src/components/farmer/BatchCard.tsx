@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ProductBatch } from '../../types/batch';
 import { StatusBadge } from '../common/StatusBadge';
 import { formatDate, formatQuantity } from '../../utils/formatters';
-import { getCropFallbackImage, resolveImageUrl, handleImageError } from '../../utils/cropImages';
+import { getCropFallbackImage, resolveImageUrl, handleImageError, calculateDynamicShelfLife } from '../../utils/cropImages';
 import { translateCrop, translateVariety } from '../../utils/cropTranslations';
 import { useLanguage } from '../../context/LanguageContext';
 import { Link, useNavigate } from 'react-router-dom';
@@ -52,11 +52,7 @@ export const BatchCard: React.FC<BatchCardProps> = ({ batch, onRefresh }) => {
 
   const shelfLifeDays = isRejected
     ? 0
-    : (batch.remainingShelfLifeDays !== undefined
-        ? batch.remainingShelfLifeDays
-        : ((batch as any).estimatedShelfLifeDays !== undefined
-            ? Math.round((batch as any).estimatedShelfLifeDays)
-            : (gUpper.includes('GRADE_C') || gUpper.includes('GRADE C') || gUpper === 'C' ? 1 : (gUpper.includes('GRADE_B') || gUpper.includes('GRADE B') || gUpper === 'B' ? 4 : 7))));
+    : calculateDynamicShelfLife(batch.cropName, batch.harvestDate, batch.assignedGrade);
 
   const expiryDate = new Date(Date.now() + shelfLifeDays * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB', {
     day: 'numeric',

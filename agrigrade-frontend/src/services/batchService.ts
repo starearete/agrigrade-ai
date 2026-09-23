@@ -2,7 +2,7 @@ import { mockRepository } from './mockRepository';
 import { ProductBatch, CreateBatchRequest, BatchStatus, MediaAsset } from '../types/batch';
 import { apiClient } from './apiClient';
 
-import { getCropFallbackImage } from '../utils/cropImages';
+import { getCropFallbackImage, calculateDynamicShelfLife } from '../utils/cropImages';
 
 const BASE_API_URL = (import.meta.env.VITE_API_URL as string) || 'https://agrigrade-backend-0g8z.onrender.com/api/v1';
 const BACKEND_BASE = BASE_API_URL.replace(/\/api\/v1\/?$/, '');
@@ -132,7 +132,7 @@ export const batchService = {
         const grade = b.assignedGrade || mb?.assignedGrade || liveAnalysis?.qualityResult?.assignedGrade;
         const score = b.qualityScore ?? mb?.qualityScore ?? liveAnalysis?.qualityResult?.qualityScore;
         const isRej = grade === 'REJECTED' || grade === 'Reject' || grade === 'REJECT' || score === 0 || (score !== undefined && score <= 10);
-        const shelfDays = isRej ? 0 : (b.remainingShelfLifeDays ?? mb?.remainingShelfLifeDays ?? liveAnalysis?.shelfLifePrediction?.estimatedRemainingDays);
+        const shelfDays = isRej ? 0 : (b.remainingShelfLifeDays ?? mb?.remainingShelfLifeDays ?? liveAnalysis?.shelfLifePrediction?.estimatedRemainingDays ?? calculateDynamicShelfLife(b.cropName, b.harvestDate, grade));
         const pLow = isRej ? 0 : ((b as any).priceRangeLow ?? mb?.priceRangeLow ?? liveAnalysis?.pricePrediction?.priceRangeLow ?? liveAnalysis?.aiPricePrediction?.estimated_low);
         const pHigh = isRej ? 0 : ((b as any).priceRangeHigh ?? mb?.priceRangeHigh ?? liveAnalysis?.pricePrediction?.priceRangeHigh ?? liveAnalysis?.aiPricePrediction?.estimated_high);
 
@@ -185,7 +185,7 @@ export const batchService = {
         const grade = mb?.assignedGrade || liveAnalysis?.qualityResult?.assignedGrade || backendBatch.assignedGrade;
         const score = mb?.qualityScore ?? liveAnalysis?.qualityResult?.qualityScore ?? backendBatch.qualityScore;
         const isRej = grade === 'REJECTED' || grade === 'Reject' || grade === 'REJECT' || score === 0 || (score !== undefined && score <= 10);
-        const shelfDays = isRej ? 0 : (mb?.remainingShelfLifeDays ?? liveAnalysis?.shelfLifePrediction?.estimatedRemainingDays ?? backendBatch.remainingShelfLifeDays);
+        const shelfDays = isRej ? 0 : (mb?.remainingShelfLifeDays ?? liveAnalysis?.shelfLifePrediction?.estimatedRemainingDays ?? backendBatch.remainingShelfLifeDays ?? calculateDynamicShelfLife(backendBatch.cropName, backendBatch.harvestDate, grade));
         const pLow = isRej ? 0 : (mb?.priceRangeLow ?? liveAnalysis?.pricePrediction?.priceRangeLow ?? (backendBatch as any).priceRangeLow);
         const pHigh = isRej ? 0 : (mb?.priceRangeHigh ?? liveAnalysis?.pricePrediction?.priceRangeHigh ?? (backendBatch as any).priceRangeHigh);
 

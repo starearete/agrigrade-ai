@@ -97,3 +97,44 @@ export function handleImageError(
   }
 }
 
+export function calculateDynamicShelfLife(cropName?: string, harvestDateStr?: string, assignedGrade?: string): number {
+  if (!cropName) return 7;
+  const nameLower = cropName.toLowerCase();
+
+  let baseDays = 14;
+  if (nameLower.includes('banana')) baseDays = 12;
+  else if (nameLower.includes('mango')) baseDays = 14;
+  else if (nameLower.includes('tomato')) baseDays = 10;
+  else if (nameLower.includes('onion')) baseDays = 30;
+  else if (nameLower.includes('brinjal') || nameLower.includes('eggplant')) baseDays = 7;
+  else if (nameLower.includes('bhendi') || nameLower.includes('okra')) baseDays = 5;
+  else if (nameLower.includes('chilli')) baseDays = 10;
+  else if (nameLower.includes('drumstick') || nameLower.includes('moringa')) baseDays = 7;
+  else if (nameLower.includes('gourd')) baseDays = 10;
+  else if (nameLower.includes('carrot')) baseDays = 21;
+  else if (nameLower.includes('beetroot')) baseDays = 20;
+  else if (nameLower.includes('tapioca')) baseDays = 15;
+
+  let gradeFactor = 1.0;
+  if (assignedGrade) {
+    const g = assignedGrade.toUpperCase();
+    if (g.includes('REJECT')) return 0;
+    if (g.includes('GRADE_A_PREMIUM') || g.includes('PREMIUM') || g === 'GRADE_A') gradeFactor = 1.2;
+    else if (g.includes('GRADE_B')) gradeFactor = 0.85;
+    else if (g.includes('GRADE_C')) gradeFactor = 0.65;
+  }
+
+  const effectiveDays = baseDays * gradeFactor;
+
+  if (harvestDateStr) {
+    const harvestDate = new Date(harvestDateStr);
+    const now = new Date();
+    if (!isNaN(harvestDate.getTime())) {
+      const ageDays = Math.max(0, Math.floor((now.getTime() - harvestDate.getTime()) / (1000 * 3600 * 24)));
+      return Math.max(0, Math.round(effectiveDays - ageDays));
+    }
+  }
+
+  return Math.round(effectiveDays);
+}
+
