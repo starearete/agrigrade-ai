@@ -68,11 +68,9 @@ async function getImageBlobFromMediaAsset(photo?: MediaAsset): Promise<Blob | nu
 
   const candidateBases = [
     '',
+    (import.meta.env.VITE_API_URL as string)?.replace(/\/api\/v1\/?$/, '') || 'https://agrigrade-backend-0g8z.onrender.com',
     'http://localhost:8085',
     'http://127.0.0.1:8085',
-    'http://localhost:8090',
-    'http://localhost:8080',
-    'http://127.0.0.1:8090',
   ];
 
   for (const base of candidateBases) {

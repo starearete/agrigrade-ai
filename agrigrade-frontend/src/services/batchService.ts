@@ -4,7 +4,7 @@ import { apiClient } from './apiClient';
 
 import { getCropFallbackImage } from '../utils/cropImages';
 
-const BASE_API_URL = (import.meta.env.VITE_API_URL as string) || 'http://localhost:8085/api/v1';
+const BASE_API_URL = (import.meta.env.VITE_API_URL as string) || 'https://agrigrade-backend-0g8z.onrender.com/api/v1';
 const BACKEND_BASE = BASE_API_URL.replace(/\/api\/v1\/?$/, '');
 
 export function resolveImageUrl(url?: string | null, cropName?: string): string {

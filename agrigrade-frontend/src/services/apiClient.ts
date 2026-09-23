@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8085/api/v1';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://agrigrade-backend-0g8z.onrender.com/api/v1';
 
 export class ApiError extends Error {
   status: number;

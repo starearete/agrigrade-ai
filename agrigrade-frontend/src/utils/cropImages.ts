@@ -27,7 +27,7 @@ const CROP_PHOTOS: Record<string, string> = {
   carrot: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&w=800&q=80',
 };
 
-const BASE_API_URL = (import.meta.env.VITE_API_URL as string) || 'http://localhost:8085/api/v1';
+const BASE_API_URL = (import.meta.env.VITE_API_URL as string) || 'https://agrigrade-backend-0g8z.onrender.com/api/v1';
 const BACKEND_BASE = BASE_API_URL.replace(/\/api\/v1\/?$/, '');
 
 export function getInlineNeutralSvg(label: string = 'AGRICULTURAL PRODUCE'): string {
