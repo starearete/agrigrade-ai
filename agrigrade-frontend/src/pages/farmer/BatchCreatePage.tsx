@@ -8,6 +8,7 @@ import { profileService } from '../../services/profileService';
 import { StorageCondition, MediaAsset } from '../../types/batch';
 import { normalizeNumericInput } from '../../utils/formatters';
 import { validateQuantityInput } from '../../utils/numberInput';
+import { readFileAsDataUrl } from '../../utils/fileUtils';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Sprout,
@@ -116,7 +117,7 @@ export const BatchCreatePage: React.FC = () => {
     }
   };
 
-  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
@@ -163,7 +164,7 @@ export const BatchCreatePage: React.FC = () => {
         continue;
       }
 
-      const previewUrl = URL.createObjectURL(file);
+      const previewUrl = await readFileAsDataUrl(file);
       newAssets.push({
         id: `photo-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
         fileName: file.name,

@@ -36,7 +36,7 @@ export function getInlineNeutralSvg(label: string = 'AGRICULTURAL PRODUCE'): str
 }
 
 export function getCropFallbackImage(cropName?: string): string {
-  if (!cropName) return getInlineNeutralSvg('AGRICULTURAL PRODUCE');
+  if (!cropName) return CROP_PHOTOS.banana;
 
   const normalized = cropName
     .toLowerCase()
@@ -53,7 +53,7 @@ export function getCropFallbackImage(cropName?: string): string {
   if (normalized.includes('tomato')) return CROP_PHOTOS.tomato;
   if (normalized.includes('onion')) return CROP_PHOTOS.onion;
   if (normalized.includes('mango')) return CROP_PHOTOS.mango;
-  if (normalized.includes('banana')) return CROP_PHOTOS.banana;
+  if (normalized.includes('banana') || normalized.includes('grand naine') || normalized.includes('g9')) return CROP_PHOTOS.banana;
   if (normalized.includes('brinjal') || normalized.includes('eggplant')) return CROP_PHOTOS.brinjal;
   if (normalized.includes('bhendi') || normalized.includes('okra')) return CROP_PHOTOS.bhendi;
   if (normalized.includes('chilli') || normalized.includes('chili')) return CROP_PHOTOS['green chilli'];
@@ -62,13 +62,25 @@ export function getCropFallbackImage(cropName?: string): string {
   if (normalized.includes('tapioca') || normalized.includes('tuber')) return CROP_PHOTOS.tapioca;
   if (normalized.includes('carrot')) return CROP_PHOTOS.carrot;
 
-  return getInlineNeutralSvg(cropName);
+  return CROP_PHOTOS.banana;
 }
 
 export function resolveImageUrl(url?: string | null, cropName?: string): string {
   if (!url || url === 'null' || url.trim() === '') {
     return getCropFallbackImage(cropName);
   }
+
+  // Intercept synthetic backend card placeholders or dummy SVG text boxes
+  if (
+    url.includes('crop_image_') ||
+    url.includes('Batch%20501%20Image') ||
+    url.includes('Batch%20502%20Image') ||
+    url.includes('AGRICULTURAL%20PRODUCE') ||
+    url.includes('AgriGrade%20AI%20Quality')
+  ) {
+    return getCropFallbackImage(cropName);
+  }
+
   if (url.startsWith('data:') || url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:')) {
     return url;
   }

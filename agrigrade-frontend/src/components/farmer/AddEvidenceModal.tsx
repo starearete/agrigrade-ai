@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { MediaAsset } from '../../types/batch';
 import { batchService } from '../../services/batchService';
 import { useNotification } from '../../context/NotificationContext';
+import { readFileAsDataUrl } from '../../utils/fileUtils';
 import { X, Image as ImageIcon, Video as VideoIcon, Plus, Upload } from 'lucide-react';
 
 interface AddEvidenceModalProps {
@@ -34,7 +35,7 @@ export const AddEvidenceModal: React.FC<AddEvidenceModalProps> = ({
   const maxPhotos = 10;
   const availablePhotoSlots = Math.max(0, maxPhotos - existingPhotosCount - newPhotos.length);
 
-  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
@@ -47,7 +48,7 @@ export const AddEvidenceModal: React.FC<AddEvidenceModalProps> = ({
     const added: MediaAsset[] = [];
 
     for (const file of selectedFiles) {
-      const previewUrl = URL.createObjectURL(file);
+      const previewUrl = await readFileAsDataUrl(file);
       added.push({
         id: `photo-new-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
         fileName: file.name,
