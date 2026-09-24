@@ -26,7 +26,8 @@ export const BatchCard: React.FC<BatchCardProps> = ({ batch, onRefresh }) => {
   const [offerPrice, setOfferPrice] = useState<string>('');
   const [offerNotes, setOfferNotes] = useState<string>('');
 
-  const rawImg = batch.images?.[0]?.imageUrl || batch.photos?.[0]?.previewUrl;
+  const userPhoto = batch.photos?.find((p) => p.previewUrl && !p.previewUrl.includes('crop_image') && !p.previewUrl.includes('data:image/svg+xml'))?.previewUrl;
+  const rawImg = userPhoto || batch.photos?.[0]?.previewUrl || batch.images?.[0]?.imageUrl;
   const primaryImg = resolveImageUrl(rawImg, batch.cropName);
 
   const gUpper = (batch.assignedGrade || '').toUpperCase();
