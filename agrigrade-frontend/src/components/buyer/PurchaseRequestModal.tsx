@@ -26,9 +26,9 @@ export const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({
   if (!isOpen || !listing) return null;
 
   const initialQty = Math.min(listing.minimumOrderQuantity || 500, listing.quantityRemaining);
-  const [offeredPriceStr, setOfferedPriceStr] = useState<string>(String(listing.askingPricePerUnit));
-  const [quantityStr, setQuantityStr] = useState<string>(String(initialQty > 0 ? initialQty : 1));
-  const [delivery, setDelivery] = useState<DeliveryPreference>('BUYER_DELIVERY_NEEDED');
+  const [offeredPriceStr, setOfferedPriceStr] = useState<string>('');
+  const [quantityStr, setQuantityStr] = useState<string>('');
+  const [delivery, setDelivery] = useState<DeliveryPreference | ''>('');
   const [message, setMessage] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -40,20 +40,20 @@ export const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({
 
   const parsedOfferedPrice = parseFloat(offeredPriceStr) || 0;
   const isPriceValid = parsedOfferedPrice > 0;
-  const isFormValid = quantityValidation.isValid && isPriceValid;
+  const isFormValid = quantityValidation.isValid && isPriceValid && delivery !== '';
 
   const totalOfferedValue = parsedOfferedPrice * (quantityValidation.isValid ? quantityValidation.parsedValue : 0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid) return;
+    if (!isFormValid || !delivery) return;
 
     setIsSubmitting(true);
     try {
       await onSubmitRequest(
         parsedOfferedPrice,
         quantityValidation.parsedValue,
-        delivery,
+        delivery as DeliveryPreference,
         message
       );
       onClose();
@@ -104,6 +104,7 @@ export const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({
                 value={offeredPriceStr}
                 onChange={(e) => setOfferedPriceStr(e.target.value)}
                 onBlur={() => setOfferedPriceStr(normalizeLeadingZeros(offeredPriceStr))}
+                placeholder={`e.g. ${listing.askingPricePerUnit}`}
                 className="w-full p-2.5 bg-white border border-[#C5E6CC] rounded-xl focus:ring-2 focus:ring-[#2E7D32] focus:outline-none font-bold text-sm"
               />
             </div>
@@ -116,6 +117,7 @@ export const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({
                 value={quantityStr}
                 onChange={(e) => setQuantityStr(e.target.value)}
                 onBlur={() => setQuantityStr(normalizeLeadingZeros(quantityStr))}
+                placeholder={`e.g. ${listing.minimumOrderQuantity || 500}`}
                 className={`w-full p-2.5 bg-white border rounded-xl focus:ring-2 focus:outline-none font-bold text-sm ${
                   !quantityValidation.isValid && quantityStr.trim() !== ''
                     ? 'border-red-500 focus:ring-red-500'
@@ -149,8 +151,9 @@ export const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({
             <select
               value={delivery}
               onChange={(e) => setDelivery(e.target.value as DeliveryPreference)}
-              className="w-full p-2.5 bg-white border border-[#C5E6CC] rounded-xl focus:ring-2 focus:ring-[#2E7D32] focus:outline-none font-medium"
+              className="w-full p-2.5 bg-white border border-[#C5E6CC] rounded-xl focus:ring-2 focus:ring-[#2E7D32] font-semibold"
             >
+              <option value="" disabled>-- Select Delivery Preference --</option>
               <option value="BUYER_DELIVERY_NEEDED">Buyer Transport Pickup Needed</option>
               <option value="FARMER_LOCATION_PICKUP">Farmer Location Pickup</option>
               <option value="MANDI_HUB_TRANSFER">Transfer via Regional Mandi Hub</option>

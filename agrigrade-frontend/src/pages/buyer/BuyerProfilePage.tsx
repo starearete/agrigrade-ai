@@ -192,6 +192,7 @@ export const BuyerProfilePage: React.FC = () => {
                   required
                   value={editFullName}
                   onChange={(e) => setEditFullName(e.target.value)}
+                  placeholder="e.g. Ramesh Kumar"
                   className="w-full px-3 py-2 border border-[#C5E6CC] rounded-xl text-xs text-[#17201A] focus:outline-hidden focus:ring-2 focus:ring-[#2E7D32]"
                 />
               </div>
@@ -203,6 +204,7 @@ export const BuyerProfilePage: React.FC = () => {
                   maxLength={10}
                   value={editMobile}
                   onChange={(e) => setEditMobile(e.target.value)}
+                  placeholder="e.g. 9876543210"
                   className="w-full px-3 py-2 border border-[#C5E6CC] rounded-xl text-xs text-[#17201A] font-mono focus:outline-hidden focus:ring-2 focus:ring-[#2E7D32]"
                 />
               </div>
@@ -212,6 +214,7 @@ export const BuyerProfilePage: React.FC = () => {
                   type="email"
                   value={editEmail}
                   onChange={(e) => setEditEmail(e.target.value)}
+                  placeholder="e.g. buyer@example.com"
                   className="w-full px-3 py-2 border border-[#C5E6CC] rounded-xl text-xs text-[#17201A] focus:outline-hidden focus:ring-2 focus:ring-[#2E7D32]"
                 />
               </div>
@@ -222,6 +225,7 @@ export const BuyerProfilePage: React.FC = () => {
                   required
                   value={editBusinessName}
                   onChange={(e) => setEditBusinessName(e.target.value)}
+                  placeholder="e.g. Madurai Agro Traders"
                   className="w-full px-3 py-2 border border-[#C5E6CC] rounded-xl text-xs text-[#17201A] focus:outline-hidden focus:ring-2 focus:ring-[#2E7D32]"
                 />
               </div>
@@ -240,6 +244,7 @@ export const BuyerProfilePage: React.FC = () => {
                   required
                   value={editAddressLine1}
                   onChange={(e) => setEditAddressLine1(e.target.value)}
+                  placeholder="e.g. Door No. 45, Market Road"
                   className="w-full px-3 py-2 border border-[#C5E6CC] rounded-xl text-xs text-[#17201A] focus:outline-hidden focus:ring-2 focus:ring-[#2E7D32]"
                 />
               </div>
@@ -250,6 +255,7 @@ export const BuyerProfilePage: React.FC = () => {
                   required
                   value={editVillage}
                   onChange={(e) => setEditVillage(e.target.value)}
+                  placeholder="e.g. Vadipatti"
                   className="w-full px-3 py-2 border border-[#C5E6CC] rounded-xl text-xs text-[#17201A] focus:outline-hidden focus:ring-2 focus:ring-[#2E7D32]"
                 />
               </div>
@@ -260,6 +266,7 @@ export const BuyerProfilePage: React.FC = () => {
                   required
                   value={editTaluk}
                   onChange={(e) => setEditTaluk(e.target.value)}
+                  placeholder="e.g. Vadipatti"
                   className="w-full px-3 py-2 border border-[#C5E6CC] rounded-xl text-xs text-[#17201A] focus:outline-hidden focus:ring-2 focus:ring-[#2E7D32]"
                 />
               </div>
@@ -275,6 +282,7 @@ export const BuyerProfilePage: React.FC = () => {
                   }}
                   className="w-full px-3 py-2 border border-[#C5E6CC] rounded-xl text-xs text-[#17201A] bg-white focus:outline-hidden focus:ring-2 focus:ring-[#2E7D32]"
                 >
+                  <option value={0} disabled>-- Select District --</option>
                   {districts.map((d) => (
                     <option key={d.id} value={d.id}>
                       {d.name}
@@ -290,6 +298,7 @@ export const BuyerProfilePage: React.FC = () => {
                   maxLength={6}
                   value={editPincode}
                   onChange={(e) => setEditPincode(e.target.value.replace(/[^0-9]/g, ''))}
+                  placeholder="e.g. 625218"
                   className="w-full px-3 py-2 border border-[#C5E6CC] rounded-xl text-xs text-[#17201A] font-mono focus:outline-hidden focus:ring-2 focus:ring-[#2E7D32]"
                 />
               </div>

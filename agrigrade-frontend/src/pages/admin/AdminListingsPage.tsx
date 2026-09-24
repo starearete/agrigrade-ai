@@ -305,6 +305,7 @@ export const AdminListingsPage: React.FC = () => {
                 rows={3}
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
+                placeholder="e.g. Non-compliance with quality standards"
                 className="w-full p-2.5 bg-[#FCFBF5] border border-[#C5E6CC] rounded-xl outline-none focus:ring-1 focus:ring-[#2E7D32]"
               />
             </div>
@@ -361,6 +362,7 @@ export const AdminListingsPage: React.FC = () => {
                 rows={2}
                 value={deleteReason}
                 onChange={(e) => setDeleteReason(e.target.value)}
+                placeholder="e.g. Violation of platform policies"
                 className="w-full p-2.5 bg-[#FCFBF5] border border-[#C5E6CC] rounded-xl outline-none focus:ring-1 focus:ring-red-400"
               />
             </div>

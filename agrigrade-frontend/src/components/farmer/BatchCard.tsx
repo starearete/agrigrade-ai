@@ -21,10 +21,10 @@ export const BatchCard: React.FC<BatchCardProps> = ({ batch, onRefresh }) => {
   const [showListModal, setShowListModal] = useState<boolean>(false);
   const [showOfferModal, setShowOfferModal] = useState<boolean>(false);
 
-  const [targetBuyer, setTargetBuyer] = useState<string>('kanbaba');
-  const [offerQty, setOfferQty] = useState<string>(String(batch.quantity));
-  const [offerPrice, setOfferPrice] = useState<string>('30');
-  const [offerNotes, setOfferNotes] = useState<string>('Fresh harvest load ready for immediate delivery.');
+  const [targetBuyer, setTargetBuyer] = useState<string>('');
+  const [offerQty, setOfferQty] = useState<string>('');
+  const [offerPrice, setOfferPrice] = useState<string>('');
+  const [offerNotes, setOfferNotes] = useState<string>('');
 
   const rawImg = batch.images?.[0]?.imageUrl || batch.photos?.[0]?.previewUrl;
   const primaryImg = resolveImageUrl(rawImg, batch.cropName);
@@ -287,7 +287,9 @@ export const BatchCard: React.FC<BatchCardProps> = ({ batch, onRefresh }) => {
                   value={targetBuyer}
                   onChange={(e) => setTargetBuyer(e.target.value)}
                   className="w-full p-2.5 bg-[#FCFBF5] border border-[#C5E6CC] rounded-xl font-bold text-[#17201A] focus:ring-2 focus:ring-[#2E7D32] focus:outline-none"
+                  required
                 >
+                  <option value="" disabled selected>-- Select Buyer --</option>
                   <option value="kanbaba">Kanbaba (Wholesaler - Dindigul)</option>
                   <option value="buyer_retailer">Buyer Retailer (Chennai)</option>
                 </select>
@@ -300,6 +302,7 @@ export const BatchCard: React.FC<BatchCardProps> = ({ batch, onRefresh }) => {
                     type="number"
                     value={offerQty}
                     onChange={(e) => setOfferQty(e.target.value)}
+                    placeholder={`e.g. ${batch.quantity}`}
                     className="w-full p-2.5 bg-[#FCFBF5] border border-[#C5E6CC] rounded-xl font-bold text-[#17201A] focus:ring-2 focus:ring-[#2E7D32] focus:outline-none"
                     required
                   />
@@ -310,6 +313,7 @@ export const BatchCard: React.FC<BatchCardProps> = ({ batch, onRefresh }) => {
                     type="number"
                     value={offerPrice}
                     onChange={(e) => setOfferPrice(e.target.value)}
+                    placeholder="e.g. 30.00"
                     className="w-full p-2.5 bg-[#FCFBF5] border border-[#C5E6CC] rounded-xl font-bold text-[#17201A] focus:ring-2 focus:ring-[#2E7D32] focus:outline-none"
                     required
                   />
@@ -321,6 +325,7 @@ export const BatchCard: React.FC<BatchCardProps> = ({ batch, onRefresh }) => {
                 <textarea
                   value={offerNotes}
                   onChange={(e) => setOfferNotes(e.target.value)}
+                  placeholder="e.g. Fresh harvest load ready for immediate delivery."
                   className="w-full p-2.5 bg-[#FCFBF5] border border-[#C5E6CC] rounded-xl text-xs font-medium focus:ring-2 focus:ring-[#2E7D32] focus:outline-none"
                   rows={2}
                 />

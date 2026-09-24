@@ -451,6 +451,7 @@ export const AdminUsersPage: React.FC = () => {
                 rows={3}
                 value={reasonInput}
                 onChange={(e) => setReasonInput(e.target.value)}
+                placeholder="e.g. Identity verification pending or policy violation"
                 className="w-full p-2.5 bg-[#FCFBF5] border border-[#C5E6CC] rounded-xl outline-none focus:ring-1 focus:ring-[#2E7D32]"
               />
             </div>

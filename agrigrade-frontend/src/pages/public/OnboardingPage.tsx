@@ -68,8 +68,8 @@ export const OnboardingPage: React.FC = () => {
 
   // Form State: Business (Buyer Specific)
   const [businessName, setBusinessName] = useState<string>('');
-  const [buyerType, setBuyerType] = useState<string>('WHOLESALER');
-  const [purchaseCapacity, setPurchaseCapacity] = useState<string>('25-50 Metric Tons');
+  const [buyerType, setBuyerType] = useState<string>('');
+  const [purchaseCapacity, setPurchaseCapacity] = useState<string>('');
   const [procurementCropIds, setProcurementCropIds] = useState<number[]>([]);
   const [gstNumber, setGstNumber] = useState<string>('');
   const [businessRegNumber, setBusinessRegNumber] = useState<string>('');
@@ -780,6 +780,7 @@ export const OnboardingPage: React.FC = () => {
                           onChange={(e) => setBuyerType(e.target.value)}
                           className="w-full px-4 py-3 rounded-2xl border border-[#C5E6CC] bg-white font-medium text-[#17201A]"
                         >
+                          <option value="" disabled selected>-- Select Buyer Category --</option>
                           <option value="INDIVIDUAL">Individual Consumer / Direct Buyer</option>
                           <option value="TRADER">Local Agricultural Trader</option>
                           <option value="WHOLESALER">Wholesale Distributor</option>

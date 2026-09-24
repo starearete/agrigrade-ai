@@ -26,7 +26,7 @@ export const UpdatePriceModal: React.FC<UpdatePriceModalProps> = ({
   onSuccess,
 }) => {
   const { showToast } = useNotification();
-  const [newPrice, setNewPrice] = useState<string>(String(currentPrice));
+  const [newPrice, setNewPrice] = useState<string>('');
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
   if (!isOpen) return null;
@@ -99,6 +99,7 @@ export const UpdatePriceModal: React.FC<UpdatePriceModalProps> = ({
               required
               value={newPrice}
               onChange={(e) => setNewPrice(e.target.value)}
+              placeholder={`e.g. ${currentPrice}`}
               className="w-full px-3 py-2.5 border border-[#C5E6CC] rounded-xl text-sm font-bold text-[#1B5E20] focus:ring-2 focus:ring-[#2E7D32] focus:outline-none"
             />
             {isValid && parsed !== currentPrice && (
