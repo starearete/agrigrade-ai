@@ -30,8 +30,8 @@ export const BatchCreatePage: React.FC = () => {
 
   const [crops, setCrops] = useState<Crop[]>([]);
   const [varieties, setVarieties] = useState<CropVariety[]>([]);
-  const [cropId, setCropId] = useState<number>(0);
-  const [varietyId, setVarietyId] = useState<number>(0);
+  const [cropId, setCropId] = useState<number | ''>('');
+  const [varietyId, setVarietyId] = useState<number | ''>('');
   const [isLoadingCrops, setIsLoadingCrops] = useState<boolean>(true);
 
   const [harvestDate, setHarvestDate] = useState<string>(
@@ -105,12 +105,12 @@ export const BatchCreatePage: React.FC = () => {
     if (selectedCrop?.defaultStorageCondition) {
       setStorageCondition(selectedCrop.defaultStorageCondition);
     }
-    setVarietyId(0); // clear currently selected variety
+    setVarietyId(''); // clear currently selected variety
     setVarieties([]);
     try {
       const vars = await cropService.getVarietiesByCropId(newCropId);
       setVarieties(vars);
-      setVarietyId(0); // require explicit variety selection
+      setVarietyId(''); // require explicit variety selection
     } catch (err) {
       console.error('Failed to load varieties for crop', newCropId, err);
       showToast('Failed to load varieties for selected crop.', 'error');
@@ -277,8 +277,8 @@ export const BatchCreatePage: React.FC = () => {
     try {
       const newBatch = await batchService.createBatch(
         {
-          cropId,
-          varietyId,
+          cropId: Number(cropId),
+          varietyId: Number(varietyId),
           harvestDate,
           quantity: validation.parsedValue,
           quantityUnit,
@@ -325,11 +325,14 @@ export const BatchCreatePage: React.FC = () => {
             <label className="block font-bold text-[#17201A] mb-1">Target Crop</label>
             <select
               value={cropId}
-              onChange={(e) => handleCropChange(parseInt(e.target.value, 10))}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val) handleCropChange(parseInt(val, 10));
+              }}
               disabled={isLoadingCrops}
               className="w-full p-2.5 bg-white border border-[#C5E6CC] rounded-xl focus:ring-2 focus:ring-[#2E7D32] font-semibold"
             >
-              <option value={0} disabled>-- Select Target Crop --</option>
+              <option value="" disabled>-- Select Target Crop --</option>
               {crops.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -342,12 +345,15 @@ export const BatchCreatePage: React.FC = () => {
             <label className="block font-bold text-[#17201A] mb-1">Variety / Cultivar</label>
             <select
               value={varietyId}
-              onChange={(e) => setVarietyId(parseInt(e.target.value, 10))}
-              disabled={cropId === 0 || varieties.length === 0}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val) setVarietyId(parseInt(val, 10));
+              }}
+              disabled={!cropId || varieties.length === 0}
               className="w-full p-2.5 bg-white border border-[#C5E6CC] rounded-xl focus:ring-2 focus:ring-[#2E7D32] font-semibold"
             >
-              <option value={0} disabled>
-                {cropId === 0 ? '-- Select Target Crop First --' : varieties.length === 0 ? 'No varieties available' : '-- Select Variety / Cultivar --'}
+              <option value="" disabled>
+                {!cropId ? '-- Select Target Crop First --' : varieties.length === 0 ? 'No varieties available' : '-- Select Variety / Cultivar --'}
               </option>
               {varieties.map((v) => (
                 <option key={v.id} value={v.id}>
