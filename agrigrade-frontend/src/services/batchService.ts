@@ -2,22 +2,13 @@ import { mockRepository } from './mockRepository';
 import { ProductBatch, CreateBatchRequest, BatchStatus, MediaAsset } from '../types/batch';
 import { apiClient } from './apiClient';
 
-import { getCropFallbackImage, calculateDynamicShelfLife } from '../utils/cropImages';
+import { getCropFallbackImage, resolveImageUrl as cropResolveImageUrl, calculateDynamicShelfLife } from '../utils/cropImages';
 
 const BASE_API_URL = (import.meta.env.VITE_API_URL as string) || 'https://agrigrade-backend-0g8z.onrender.com/api/v1';
 const BACKEND_BASE = BASE_API_URL.replace(/\/api\/v1\/?$/, '');
 
 export function resolveImageUrl(url?: string | null, cropName?: string): string {
-  if (!url || url === 'null' || url.trim() === '') {
-    return getCropFallbackImage(cropName);
-  }
-  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:') || url.startsWith('data:')) {
-    return url;
-  }
-  if (url.startsWith('/')) {
-    return `${BACKEND_BASE}${url}`;
-  }
-  return `${BACKEND_BASE}/${url}`;
+  return cropResolveImageUrl(url, cropName);
 }
 
 function mapBackendBatchToFrontend(backendBatch: any): ProductBatch {
@@ -126,6 +117,13 @@ export const batchService = {
 
       const mb = mockBatches.find((x) => x.id === b.id);
       const liveAnalysis = analyses.find((a) => a.batchId === b.id);
+
+      const mbHasUserPhotos = mb?.photos && mb.photos.length > 0 && mb.photos.some(p => p.previewUrl && (p.previewUrl.startsWith('data:image/') || p.previewUrl.startsWith('blob:') || (p.previewUrl.startsWith('http') && !p.previewUrl.includes('crop_image'))));
+      const mbHasUserImages = mb?.images && mb.images.length > 0 && mb.images.some(img => img.imageUrl && (img.imageUrl.startsWith('data:image/') || img.imageUrl.startsWith('blob:') || (img.imageUrl.startsWith('http') && !img.imageUrl.includes('crop_image'))));
+
+      const finalPhotos = mbHasUserPhotos ? mb!.photos : b.photos;
+      const finalImages = mbHasUserImages ? mb!.images : b.images;
+
       const isGraded = (mb && (mb.status === 'AI_GRADED' || mb.status === 'AI_VERIFIED')) || (liveAnalysis && liveAnalysis.status === 'COMPLETED') || b.status === 'AI_GRADED' || b.status === 'AI_VERIFIED';
 
       if (isGraded || b.assignedGrade || mb?.assignedGrade || liveAnalysis) {
@@ -138,6 +136,8 @@ export const batchService = {
 
         map.set(b.id, {
           ...b,
+          photos: finalPhotos,
+          images: finalImages,
           status: isRej ? 'AI_GRADED' : (b.status || mb?.status || 'AI_GRADED'),
           qualityScore: score,
           assignedGrade: grade,
@@ -146,7 +146,11 @@ export const batchService = {
           priceRangeHigh: pHigh,
         });
       } else {
-        map.set(b.id, b);
+        map.set(b.id, {
+          ...b,
+          photos: finalPhotos,
+          images: finalImages,
+        });
       }
     }
 
@@ -169,7 +173,6 @@ export const batchService = {
       }
     } catch (err: any) {
       console.warn(`Backend /batches/${id} API error:`, err);
-      // If backend returned HTTP 403 or 404, strictly reject access!
       if (err && (err.status === 403 || err.status === 404 || err.statusCode === 403 || err.statusCode === 404)) {
         return null;
       }
@@ -181,6 +184,12 @@ export const batchService = {
       const mb = state.batches.find((b) => b.id === id) || null;
       const liveAnalysis = state.analyses.find((a) => a.batchId === id);
 
+      const mbHasUserPhotos = mb?.photos && mb.photos.length > 0 && mb.photos.some(p => p.previewUrl && (p.previewUrl.startsWith('data:image/') || p.previewUrl.startsWith('blob:') || (p.previewUrl.startsWith('http') && !p.previewUrl.includes('crop_image'))));
+      const mbHasUserImages = mb?.images && mb.images.length > 0 && mb.images.some(img => img.imageUrl && (img.imageUrl.startsWith('data:image/') || img.imageUrl.startsWith('blob:') || (img.imageUrl.startsWith('http') && !img.imageUrl.includes('crop_image'))));
+
+      const finalPhotos = mbHasUserPhotos ? mb!.photos : backendBatch.photos;
+      const finalImages = mbHasUserImages ? mb!.images : backendBatch.images;
+
       if (mb || liveAnalysis) {
         const grade = mb?.assignedGrade || liveAnalysis?.qualityResult?.assignedGrade || backendBatch.assignedGrade;
         const score = mb?.qualityScore ?? liveAnalysis?.qualityResult?.qualityScore ?? backendBatch.qualityScore;
@@ -191,6 +200,8 @@ export const batchService = {
 
         return {
           ...backendBatch,
+          photos: finalPhotos,
+          images: finalImages,
           status: mb?.status || (liveAnalysis ? 'AI_GRADED' : backendBatch.status),
           qualityScore: score,
           assignedGrade: grade,
@@ -199,10 +210,13 @@ export const batchService = {
           priceRangeHigh: pHigh,
         };
       }
-      return backendBatch;
+      return {
+        ...backendBatch,
+        photos: finalPhotos,
+        images: finalImages,
+      };
     }
 
-    // Fallback to user-scoped mock storage
     const activeUserId = mockRepository.getActiveUserId();
     const state = mockRepository.getState(activeUserId || undefined);
     const mb = state.batches.find((b) => b.id === id) || null;
@@ -250,9 +264,22 @@ export const batchService = {
           }
         }
 
-        // Refetch complete batch with uploaded images
+        // Refetch complete batch
         const fullBatch = await apiClient.get<any>(`/batches/${batchId}`);
         const createdBatch = mapBackendBatchToFrontend(fullBatch || backendBatch);
+
+        // Explicitly preserve user uploaded photos (Base64 data URLs)
+        if (request.photos && request.photos.length > 0) {
+          createdBatch.photos = request.photos;
+          createdBatch.images = request.photos.map((p, idx) => ({
+            id: createdBatch.id * 10 + idx,
+            batchId: createdBatch.id,
+            imageUrl: p.previewUrl,
+            sequenceNo: idx + 1,
+            sha256Hash: `hash-${createdBatch.id}-${idx}`,
+          }));
+        }
+
         mockRepository.updateState((draft) => {
           draft.batches.unshift(createdBatch);
         });

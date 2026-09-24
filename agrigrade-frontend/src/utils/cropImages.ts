@@ -70,13 +70,16 @@ export function resolveImageUrl(url?: string | null, cropName?: string): string 
     return getCropFallbackImage(cropName);
   }
 
-  // Intercept synthetic backend card placeholders or dummy SVG text boxes
+  // Intercept synthetic backend card placeholders, crop_image_ urls, or dummy SVG text boxes
   if (
+    url.includes('crop_image') ||
     url.includes('crop_image_') ||
-    url.includes('Batch%20501%20Image') ||
-    url.includes('Batch%20502%20Image') ||
+    url.includes('Batch%20501') ||
+    url.includes('Batch%20502') ||
+    url.includes('Batch%20') ||
     url.includes('AGRICULTURAL%20PRODUCE') ||
-    url.includes('AgriGrade%20AI%20Quality')
+    url.includes('AgriGrade%20AI%20Quality') ||
+    url.includes('data:image/svg+xml')
   ) {
     return getCropFallbackImage(cropName);
   }
